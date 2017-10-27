@@ -1,8 +1,12 @@
 // dllmain.cpp : Defines the entry point for the DLL application.
 #include "stdafx.h"
-#include "objs.h"
 
-BOOL APIENTRY DllMain( HMODULE hModule,
+#ifdef _MANAGED
+#pragma managed(push, off)
+#endif
+
+extern "C" int APIENTRY
+DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
                        LPVOID lpReserved
 					 )
@@ -19,4 +23,10 @@ BOOL APIENTRY DllMain( HMODULE hModule,
 
 	return TRUE;
 }
+
+#ifdef _MANAGED
+#pragma managed(pop)
+#endif
+
+
 

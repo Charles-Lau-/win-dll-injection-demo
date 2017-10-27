@@ -1,8 +1,65 @@
 #pragma once
 #include "objs.h"
 #include "stdafx.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include "WPFPageHost.h"
 
-HWND parent;
+
+
+#ifdef _MANAGED
+#pragma managed(push, off)
+#endif
+
+#ifdef _MANAGED
+#pragma managed(pop)
+#endif
+
+HWND mqlWindow;
+
+
+
+void WPFButtonClicked(Object ^sender, MyPageEventArgs ^args)
+{
+	if (args->IsOK) //display data if OK button was clicked
+	{
+		System::Windows::MessageBox::Show("button confirmation is clicked");
+	}
+	else
+	{
+		System::Windows::MessageBox::Show("cancel button is clicked");
+	}
+}
+
+
+//get hwnd of a WPF
+HWND GetHwnd(HWND pa, int x, int y, int width, int height)
+{
+	System::Windows::Interop::HwndSourceParameters^ sourceParams = gcnew System::Windows::Interop::HwndSourceParameters(
+		"hi" // NAME
+	);
+	sourceParams->PositionX = x;
+	sourceParams->PositionY = y;
+	sourceParams->Height = height;
+	sourceParams->Width = width;
+	sourceParams->ParentWindow = System::IntPtr(pa);
+	sourceParams->WindowStyle =  WS_VISIBLE | WS_CHILD; // style
+	System::Windows::Interop::HwndSource^ source = gcnew System::Windows::Interop::HwndSource(*sourceParams);
+
+	WPFPage ^myPage = gcnew WPFPage(width, height);
+	//Assign a reference to the WPF page and a set of UI properties to a set of static properties in a class
+	//that is designed for that purpose.
+	WPFPageHost::hostedPage = myPage;
+	WPFPageHost::initBackBrush = myPage->Background;
+	WPFPageHost::initFontFamily = myPage->DefaultFontFamily;
+	myPage->OnButtonClicked += gcnew WPFPage::ButtonClickHandler(WPFButtonClicked);
+	source->RootVisual = myPage;
+	return (HWND)source->Handle.ToPointer();
+}
+
+
+
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -10,11 +67,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_DESTROY:
 		PostQuitMessage(0);//可以使GetMessage返回0  
 		break;
-	default:
+	case WM_CREATE:
+		//GetClientRect(hWnd, &rect);
+		HWND hwnd = GetHwnd(hWnd, 0, 0, 375, 250);
+		//DWORD error = GetLastError();
+		//CreateDataDisplay(hWnd, 275, rect.right - 375, 375);
+		//CreateRadioButtons(hWnd);;
 		break;
 	}
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
+
 
 BOOL RegisterWindow()
 {
@@ -47,7 +110,7 @@ void  createWindow() {
 
 	HWND window_ = CreateWindow("DllMain", "子窗口",
 		WS_OVERLAPPEDWINDOW | WS_CHILD | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 800, 400,
-		parent, NULL, NULL, NULL);
+		mqlWindow , NULL, NULL, NULL);
 	
 	Display(window_);
 
@@ -76,9 +139,17 @@ void entrance()
 		DispatchMessage(&messages);
 	}
 }
+
+
+void ThreadProc() {
+	resolveBlink(mqlWindow);
+	entrance();
+}
+
 //entrance
 void createProcess(HWND hwnd) {
-	parent = hwnd;
-	resolveBlink(hwnd);
-	entrance();
+	mqlWindow = hwnd;
+	System::Threading::Thread^  t = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(ThreadProc));
+	t->ApartmentState = System::Threading::ApartmentState::STA;
+	t->Start();
 }
