@@ -13,21 +13,36 @@ using namespace System::Windows::Documents;
 using namespace System::Windows::Media;
 using namespace System::Windows::Media::Imaging;
 
-public ref class MyPageEventArgs :EventArgs {
+public ref class MyApplicationEventArgs:EventArgs {
 private:
-	bool data;
+	String^ actor;
+	String^ verb;
+	String^ target;
 public:
-	MyPageEventArgs(bool data) {
-		data = data;
-	};
-	property bool IsOK {
-		bool get() { return data; }
-	};
+	MyApplicationEventArgs(String^ actor) { this->actor = actor; };
+	MyApplicationEventArgs(String^ actor, String^ verb) { this->verb = verb; this->actor=actor};
+	MyApplicationEventArgs(String^ actor, String^ verb, String^ target) { this->actor = actor; this->verb = verb; this->target = target; };
+
+	property String^ Actor {
+		String^ get() { return this->actor; }
+		void set(String^ value) { this->actor = value; }
+	}
+
+	property String^ Verb {
+		String^ get() { return this->verb; }
+		void set(String^ value) { this->verb = value; }
+	}
+
+	property String^ Target {
+		String^ get() { return this->target; }
+		void set(String^ value) { this->target = value; }
+	}
 };
+
 
 public ref class WPFPage:Grid {
 public:
-	delegate void ButtonClickHandler(Object ^, MyPageEventArgs ^);
+	delegate void ButtonClickHandler(Object ^, MyApplicationEventArgs^);
 	delegate void GridMoveHandler(Object ^, Point ^);
 	WPFPage() {};
 	WPFPage(int height, int width);

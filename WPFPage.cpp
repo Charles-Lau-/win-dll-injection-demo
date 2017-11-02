@@ -117,7 +117,12 @@ WPFPage::WPFPage(int allottedWidth, int allotedHeight)
 	this->MouseMove += gcnew MouseEventHandler(this, &WPFPage::GridMouseMove);
 
 	//handle button click
-	hiddenButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	pingchangButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	qingchangButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	buyButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	sellButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	
+
 	//cancelButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
 }
 
@@ -162,9 +167,21 @@ Button ^WPFPage::CreateButton(int column, int row, String ^ text)
 void WPFPage::ButtonClicked(Object ^sender, RoutedEventArgs ^args)
 {
 
+	if (sender == qingchangButton) {
+
+	}
+	else if (sender == pingchangButton) {
+
+	}
+	else if (sender == buyButton) {
+
+	}
+	else if (sender == sellButton) {
+		
+	}
 	//TODO: validate input data
-	bool okClicked = true;
-	System::Windows::MessageBox::Show("button click event happened");
+	//bool okClicked = true;
+	//System::Windows::MessageBox::Show("button click event happened");
 	//OnButtonClicked(this, gcnew MyPageEventArgs(okClicked));
 }
 
