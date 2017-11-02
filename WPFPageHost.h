@@ -3,6 +3,9 @@
 
 public ref class WPFPageHost
 {
+
+private: 
+
 public:
 	WPFPageHost(){};
 	//initial property settings

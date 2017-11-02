@@ -16,6 +16,7 @@
 #endif
 
 HWND mqlWindow;
+HWND parentWindow;
 
 
 
@@ -31,6 +32,12 @@ void WPFButtonClicked(Object ^sender, MyPageEventArgs ^args)
 	}
 }
 
+void GridMoved(Object ^sender, Point ^p) {
+	RECT rect;
+	GetWindowRect(parentWindow, &rect);
+	MapWindowPoints(HWND_DESKTOP, mqlWindow, (LPPOINT)&rect, 2);
+	MoveWindow(parentWindow, rect.left + p->X, rect.top + p->Y, 240, 140, true);
+}
 
 //get hwnd of a WPF
 HWND GetHwnd(HWND pa, int x, int y, int width, int height)
@@ -53,6 +60,7 @@ HWND GetHwnd(HWND pa, int x, int y, int width, int height)
 	WPFPageHost::initBackBrush = myPage->Background;
 	WPFPageHost::initFontFamily = myPage->DefaultFontFamily;
 	myPage->OnButtonClicked += gcnew WPFPage::ButtonClickHandler(WPFButtonClicked);
+	myPage->OnGridMoved += gcnew WPFPage::GridMoveHandler(GridMoved);
 	source->RootVisual = myPage;
 	return (HWND)source->Handle.ToPointer();
 }
@@ -69,7 +77,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_CREATE:
 		//GetClientRect(hWnd, &rect);
-		HWND hwnd = GetHwnd(hWnd, 0, 0, 375, 250);
+		HWND hwnd = GetHwnd(hWnd, 0, 0, 240, 140);
 		//DWORD error = GetLastError();
 		//CreateDataDisplay(hWnd, 275, rect.right - 375, 375);
 		//CreateRadioButtons(hWnd);;
@@ -100,6 +108,7 @@ BOOL RegisterWindow()
 	return true;
 }
 
+
 //展示和更新主窗口
 void Display(HWND hwnd) {
 	ShowWindow(hwnd, SW_SHOW);
@@ -107,13 +116,14 @@ void Display(HWND hwnd) {
 }
 
 void  createWindow() {
-
 	HWND window_ = CreateWindow("DllMain", "子窗口",
-		WS_OVERLAPPEDWINDOW | WS_CHILD | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 800, 400,
+		WS_OVERLAPPEDWINDOW | WS_CHILD | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 240, 140,
 		mqlWindow , NULL, NULL, NULL);
 	
-	Display(window_);
 
+	parentWindow = window_;
+	SetWindowLong(window_, GWL_STYLE, 0);
+	Display(window_);
 
 }
 
