@@ -7,6 +7,10 @@
 void WPFPage::GridMouseMove(Object ^sender, MouseEventArgs^ args) {
 	if (args->LeftButton == MouseButtonState::Pressed && this->isBeingPressed) {
 		Point pos = args->GetPosition(this);
+		if (this->container->IndexOf(sender) > 0) {
+			if (pos.X != this->mousePrePosition.X && pos.Y != this->mousePrePosition.Y)
+				this->excludeButtonClicked = true;
+		}
 		OnGridMoved(this, gcnew Point(pos.X - this->mousePrePosition.X, pos.Y - this->mousePrePosition.Y));
 	}
 }
@@ -32,7 +36,8 @@ WPFPage::WPFPage(int allottedWidth, int allotedHeight)
 	int column = 8;
 	array<ColumnDefinition ^> ^ columnDef = gcnew array<ColumnDefinition ^>(column);
 	array<RowDefinition ^> ^ rowDef = gcnew array<RowDefinition ^>(rows);
-
+	this->container = gcnew System::Collections::ArrayList();
+	this->excludeButtonClicked = false;
 	this->Height = allotedHeight;
 	this->Width = allottedWidth;
 	this->Background = gcnew SolidColorBrush(Colors::Black);
@@ -66,6 +71,16 @@ WPFPage::WPFPage(int allottedWidth, int allotedHeight)
 	qingchangButton->Background = gcnew SolidColorBrush(Colors::Gray);
 	duisuoButton->Background = gcnew SolidColorBrush(Colors::Gray);
 	quansuoButton->Background = gcnew SolidColorBrush(Colors::Gray);
+
+	//put buttons in container array for convenient manipulation
+	this->container->Add(hiddenButton);
+	this->container->Add(advanceButton);
+	this->container->Add(configureButton);
+	this->container->Add(pingchangButton);
+	this->container->Add(qingchangButton);
+	this->container->Add(duisuoButton);
+	this->container->Add(quansuoButton);
+
 	//add the second row button
 	sellButton = CreateButton(0, 1, "SELL");
 	sellButton->Background = gcnew SolidColorBrush(Colors::Red);
@@ -89,6 +104,14 @@ WPFPage::WPFPage(int allottedWidth, int allotedHeight)
 	Grid::SetColumnSpan(sellButton, 3);
 	Grid::SetColumnSpan(lotsButton5, 2);
 
+	//add second row element in container array for convenient manipulation
+	this->container->Add(sellButton);
+	this->container->Add(convenientButton1);
+	this->container->Add(convenientButton2);
+	this->container->Add(convenientButton3);
+	this->container->Add(convenientButton4);
+	this->container->Add(lotsButton5);
+	this->container->Add(buyButton);
 	//add the last row
 	deleteStopButton = CreateButton(0, 4, "删");
 	deleteStopButton->Background = gcnew SolidColorBrush(Colors::Gray);
@@ -103,6 +126,13 @@ WPFPage::WPFPage(int allottedWidth, int allotedHeight)
 	deleteProfitButton = CreateButton(7, 4, "删");
 	deleteProfitButton->Background = gcnew SolidColorBrush(Colors::Gray);
 
+	//add third row element in container array for convenient manipulation
+	this->container->Add(deleteStopButton);
+	this->container->Add(stopButton);
+	this->container->Add(stopLevelInput);
+	this->container->Add(profitButton);
+	this->container->Add(profitLevelInput);
+	this->container->Add(deleteProfitButton);
 
 
 
@@ -116,12 +146,47 @@ WPFPage::WPFPage(int allottedWidth, int allotedHeight)
 	this->MouseUp += gcnew MouseButtonEventHandler(this, &WPFPage::GridMouseUp);
 	this->MouseMove += gcnew MouseEventHandler(this, &WPFPage::GridMouseMove);
 
+	for (int i = 0; i < this->container->Count; i++) {
+		UIElement^ ele = static_cast<UIElement^>(this->container[i]);
+		ele->PreviewMouseDown += gcnew  MouseButtonEventHandler(this, &WPFPage::GridMouseDown);
+		ele->PreviewMouseUp += gcnew MouseButtonEventHandler(this, &WPFPage::GridMouseUp);
+		ele->PreviewMouseMove += gcnew MouseEventHandler(this, &WPFPage::GridMouseMove);
+	}
+
 	//handle button click
+	hiddenButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	advanceButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	configureButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
 	pingchangButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
 	qingchangButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
-	buyButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	duisuoButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	quansuoButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+
 	sellButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	buyButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+
+
+	convenientButton1->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked); 
+	convenientButton2->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	convenientButton3->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	convenientButton4->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+
+
+	deleteStopButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	stopButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+
+	deleteProfitButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
+	profitButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
 	
+	
+
+
+
+
+
+
+
+
 
 	//cancelButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
 }
@@ -166,23 +231,80 @@ Button ^WPFPage::CreateButton(int column, int row, String ^ text)
 
 void WPFPage::ButtonClicked(Object ^sender, RoutedEventArgs ^args)
 {
-
-	if (sender == qingchangButton) {
+	MyApplicationEventArgs^ myargs = gcnew MyApplicationEventArgs();
+	Boolean send = false;
+	if (sender == this->qingchangButton) {
+		myargs->Actor = "qingchang";
+		send = true;
+	}
+	else if (sender == this->pingchangButton) {
+		myargs->Actor = "pingchang";
+		send = true;
 
 	}
-	else if (sender == pingchangButton) {
+	else if (sender == this->buyButton) {
+		myargs->Actor = "buy";
+		send = true;
 
 	}
-	else if (sender == buyButton) {
+	else if (sender == this->sellButton) {
+		myargs->Actor = "sell";
+		send = true;
+	}
+	else if (sender == this->duisuoButton) {
+		myargs->Actor = "duisuo";
+		send = true;
+	}
+	else if (sender == this->quansuoButton) {
+		myargs->Actor = "quansuo";
+		send = true;
+	}
+	else if (sender == this->sellButton) {
+		myargs->Actor = "buy";
+		send = true;
+	}
+	else if (sender == this->buyButton) {
+		myargs->Actor = "sell";
+		send = true;
+	}
+	else if (sender == this->deleteStopButton) {
+		myargs->Actor = "deleteStop";
+		send = true;
+	}
+	else if (sender == this->deleteProfitButton) {
+		myargs->Actor = "deleteProfit";
+		send = true;
+	}
 
-	}
-	else if (sender == sellButton) {
-		
-	}
 	//TODO: validate input data
 	//bool okClicked = true;
 	//System::Windows::MessageBox::Show("button click event happened");
 	//OnButtonClicked(this, gcnew MyPageEventArgs(okClicked));
+	if (send) {
+		if (this->excludeButtonClicked)
+			this->excludeButtonClicked = false;
+		else {
+			OnButtonClicked(this, myargs);
+		}
+	}
+	else {
+		if (sender == this->convenientButton1 
+			|| sender == this->convenientButton2 
+			|| sender == this->convenientButton3 
+			|| sender == this->convenientButton4) {
+			Button^ button = static_cast<Button^>(sender);
+			this->lotsButton5->Text = static_cast<String^>(button->Content);
+		}
+		else if (sender == this->stopButton || sender == this->profitButton)
+		{
+			Button^ button = static_cast<Button^>(sender);
+			String^ content = static_cast<String^>(button->Content);
+			if (content == "有")
+				button->Content = "无";
+			else if(content == "无")
+				button->Content = "有";
+		}
+	}
 }
 
 

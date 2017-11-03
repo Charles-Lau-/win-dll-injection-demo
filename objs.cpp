@@ -20,16 +20,10 @@ HWND parentWindow;
 
 
 
-void WPFButtonClicked(Object ^sender, MyPageEventArgs ^args)
+void WPFButtonClicked(Object ^sender, MyApplicationEventArgs ^args)
 {
-	if (args->IsOK) //display data if OK button was clicked
-	{
-		System::Windows::MessageBox::Show("button confirmation is clicked");
-	}
-	else
-	{
-		System::Windows::MessageBox::Show("cancel button is clicked");
-	}
+
+	System:: Windows::MessageBox::Show(args->Actor);
 }
 
 void GridMoved(Object ^sender, Point ^p) {

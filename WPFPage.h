@@ -20,8 +20,9 @@ private:
 	String^ target;
 public:
 	MyApplicationEventArgs(String^ actor) { this->actor = actor; };
-	MyApplicationEventArgs(String^ actor, String^ verb) { this->verb = verb; this->actor=actor};
+	MyApplicationEventArgs(String^ actor, String^ verb) { this->verb = verb; this->actor = actor;};
 	MyApplicationEventArgs(String^ actor, String^ verb, String^ target) { this->actor = actor; this->verb = verb; this->target = target; };
+	MyApplicationEventArgs() {};
 
 	property String^ Actor {
 		String^ get() { return this->actor; }
@@ -88,10 +89,11 @@ public:
 
 private:
 	
-	//record the position before moving the grid
+	System::Collections::ArrayList^  container;
+	//record the position before moving the grid;maintain the status of being pressed; exclude button click event from move event
 	Point mousePrePosition;
-
 	Boolean isBeingPressed;
+	Boolean excludeButtonClicked;
 
 	Button^ hiddenButton;
 	Button^ advanceButton;
