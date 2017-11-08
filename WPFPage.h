@@ -118,11 +118,11 @@ private:
 	Label^ duoBiPingChang;
 
 
-	Label^ shouDongPingChangSwitch1;
-	Label^ shouDongPingChangSwitch2;
+	Button^ shouDongPingChangSwitch1;
+	Button^ shouDongPingChangSwitch2;
 
-	Label^ duoBiPingChangSwitch1;
-	Label^ duoBiPingChangSwitch2;
+	Button^ duoBiPingChangSwitch1;
+	Button^ duoBiPingChangSwitch2;
 
 	Boolean isAdvanced;
 

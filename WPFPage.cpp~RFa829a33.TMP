@@ -23,8 +23,34 @@ void WPFPage::GridMouseUp(Object ^sender, MouseButtonEventArgs^ args) {
 	if (args->LeftButton == MouseButtonState::Released && this->isBeingPressed) {
 		Point pos = args->GetPosition(this);
 		OnGridMoved(this, gcnew Point(pos.X - this->mousePrePosition.X, pos.Y - this->mousePrePosition.Y));
+		//deal with click on advanced button
+		if (sender == this->shouDongPingChangSwitch1 || sender == this->shouDongPingChangSwitch2) {
+			if (!this->excludeButtonClicked) {
+				if (this->shouDongPingChangSwitch1->Content == "ON") {
+					this->shouDongPingChangSwitch1->Content = "";
+					this->shouDongPingChangSwitch2->Content = "OFF";
+				}
+				else if (this->shouDongPingChangSwitch2->Content == "OFF") {
+					this->shouDongPingChangSwitch1->Content = "ON";
+					this->shouDongPingChangSwitch2->Content = "";
+				}
+			}
+			else
+				this->excludeButtonClicked = false;
+		}
+		else if (sender == this->duoBiPingChangSwitch1 || sender == this->duoBiPingChangSwitch2) {
+			if (!this->excludeButtonClicked) {
+				if (this->duoBiPingChangSwitch1->Content == "ON") {
+					this->duoBiPingChangSwitch1->Content = "";
+					this->duoBiPingChangSwitch2->Content = "OFF";
+				}
+				else if (this->duoBiPingChangSwitch2->Content == "OFF") {
+					this->duoBiPingChangSwitch1->Content = "ON";
+					this->duoBiPingChangSwitch2->Content = "";
+				}
+			}
+		}
 	}
-	
 }
 
 void WPFPage::GridMouseDown(Object ^sender, MouseButtonEventArgs^ args) {
@@ -187,8 +213,10 @@ WPFPage::WPFPage()
 	shouDongPingChangSwitch2->BorderThickness = Thickness(0);
 	shouDongPingChangSwitch1->BorderBrush = gcnew SolidColorBrush(Colors::Transparent);
 	shouDongPingChangSwitch2->BorderBrush = gcnew SolidColorBrush(Colors::Transparent);
-	shouDongPingChangSwitch1->Margin = Thickness(0,0,-1,0);
-	shouDongPingChangSwitch2->Margin = Thickness(-1,0,0,0);
+	shouDongPingChangSwitch1->Margin = Thickness(0);
+	shouDongPingChangSwitch2->Margin = Thickness(0);
+	shouDongPingChangSwitch1->Cursor = System::Windows::Input::Cursors::Arrow;
+	shouDongPingChangSwitch2->Cursor = System::Windows::Input::Cursors::Arrow;
 	//shouDongPingChangSwitch1->Cursor = gcnew System::Windows::Input::Cursor("hand");
 	Grid::SetColumnSpan(shouDongPingChang, 2);
 
@@ -202,23 +230,16 @@ WPFPage::WPFPage()
 	duoBiPingChangSwitch2->BorderThickness = Thickness(0);
 	duoBiPingChangSwitch1->BorderBrush = gcnew SolidColorBrush(Colors::Transparent);
 	duoBiPingChangSwitch2->BorderBrush = gcnew SolidColorBrush(Colors::Transparent);
-	duoBiPingChangSwitch1->Margin = Thickness(0,0, -1,0);
-	duoBiPingChangSwitch2->Margin = Thickness(-1, 0 ,0 ,0);
+	duoBiPingChangSwitch1->Margin = Thickness(0);
+	duoBiPingChangSwitch2->Margin = Thickness(0);
 	Grid::SetColumnSpan(duoBiPingChang, 2);
 
-
-	shouDongPingChangSwitch1->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
-	shouDongPingChangSwitch2->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
-
-	duoBiPingChangSwitch1->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
-	duoBiPingChangSwitch2->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
 
 	this->container->Add(shouDongPingChangSwitch1);
 	this->container->Add(shouDongPingChangSwitch2);
 
 	this->container->Add(duoBiPingChangSwitch1);
 	this->container->Add(duoBiPingChangSwitch2);
-
 
 
 	//handle move grid event
@@ -350,38 +371,6 @@ void WPFPage::ButtonClicked(Object ^sender, RoutedEventArgs ^args)
 		else {
 			myargs->Target = "advance";
 			this->isAdvanced = true;
-		}
-		send = true;
-	}
-
-	//deal with click on advanced button
-	else if (sender == shouDongPingChangSwitch1 || sender == shouDongPingChangSwitch2) {
-		if (this->shouDongPingChangSwitch1->Content == "ON") {
-			this->shouDongPingChangSwitch1->Content = "";
-			this->shouDongPingChangSwitch2->Content = "OFF";
-			myargs->Actor = "shouDongPingChang";
-			myargs->Verb = "close";
-		}
-		else if (this->shouDongPingChangSwitch2->Content == "OFF") {
-			this->shouDongPingChangSwitch1->Content = "ON";
-			this->shouDongPingChangSwitch2->Content = "";
-			myargs->Actor = "shouDongPingChang";
-			myargs->Verb = "open";
-		}
-		send = true;
-	}
-	else if (sender == duoBiPingChangSwitch1 || sender == duoBiPingChangSwitch2) {
-		if (this->duoBiPingChangSwitch1->Content == "ON") {
-			this->duoBiPingChangSwitch1->Content = "";
-			this->duoBiPingChangSwitch2->Content = "OFF";
-			myargs->Actor = "duoBiPingChang";
-			myargs->Verb = "close";
-		}
-		else if (this->duoBiPingChangSwitch2->Content == "OFF") {
-			this->duoBiPingChangSwitch1->Content = "ON";
-			this->duoBiPingChangSwitch2->Content = "";
-			myargs->Actor = "duoBiPingChang";
-			myargs->Verb = "open";
 		}
 		send = true;
 	}
