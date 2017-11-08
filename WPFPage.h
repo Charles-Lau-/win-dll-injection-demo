@@ -12,6 +12,7 @@ using namespace System::Windows::Input;
 using namespace System::Windows::Documents;
 using namespace System::Windows::Media;
 using namespace System::Windows::Media::Imaging;
+using namespace System::Windows::Shapes;
 
 public ref class MyApplicationEventArgs:EventArgs {
 private:
@@ -41,12 +42,12 @@ public:
 };
 
 
-public ref class WPFPage:Grid {
+public ref class WPFPage :Grid {
 public:
 	delegate void ButtonClickHandler(Object ^, MyApplicationEventArgs^);
 	delegate void GridMoveHandler(Object ^, Point ^);
-	WPFPage() {};
-	WPFPage(int height, int width);
+	WPFPage();
+	WPFPage(int height, int width) {};
 	event ButtonClickHandler ^OnButtonClicked;
 	event GridMoveHandler ^OnGridMoved;
 	property FontFamily^ DefaultFontFamily
@@ -65,25 +66,12 @@ public:
 	void WPFPage::SetFontFamily(FontFamily^ newFontFamily);
 	void WPFPage::GridMouseDown(Object ^sender, MouseButtonEventArgs^ args);
 	void WPFPage::GridMouseUp(Object ^sender, MouseButtonEventArgs^ args);
+	//draw a line
+	Border ^WPFPage::CreateBorder(int column, int row, Color color, int thickness);
+	//deal with switch button event
 
 
 
-
-	String^ EnteredName;
-	String^ EnteredAddress;
-	String^ EnteredCity;
-	String^ EnteredZip;
-	String^ EnteredState;
-
-	Label^ titleText;
-	Label^ nameLabel;
-	TextBox^ nameTextBox;
-	Label^ addressLabel;
-	TextBox^ addressTextBox;
-	Label^ cityLabel;
-	TextBox^ cityTextBox;
-	Label^ stateLabel;
-	TextBox^ stateTextBox;
 
 
 
@@ -118,6 +106,30 @@ private:
 	TextBox^ profitLevelInput;
 	Button^ profitButton;
 	Button^ deleteProfitButton;
+
+
+	Border^ sepLine1;
+	Border^ sepLine2;
+	Border^ sepLine3;
+	Border^ sepLine4;
+
+
+	Label^ shouDongPingChang;
+	Label^ duoBiPingChang;
+
+
+	Label^ shouDongPingChangSwitch1;
+	Label^ shouDongPingChangSwitch2;
+
+	Label^ duoBiPingChangSwitch1;
+	Label^ duoBiPingChangSwitch2;
+
+	Boolean isAdvanced;
+
+
+
+
+
 
 	FontFamily^ _defaultFontFamily;
 

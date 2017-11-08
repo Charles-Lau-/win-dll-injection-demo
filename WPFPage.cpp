@@ -4,6 +4,10 @@
 #include <cstdio>
 #include <iostream>
 
+
+
+
+
 void WPFPage::GridMouseMove(Object ^sender, MouseEventArgs^ args) {
 	if (args->LeftButton == MouseButtonState::Pressed && this->isBeingPressed) {
 		Point pos = args->GetPosition(this);
@@ -19,7 +23,33 @@ void WPFPage::GridMouseUp(Object ^sender, MouseButtonEventArgs^ args) {
 	if (args->LeftButton == MouseButtonState::Released && this->isBeingPressed) {
 		Point pos = args->GetPosition(this);
 		OnGridMoved(this, gcnew Point(pos.X - this->mousePrePosition.X, pos.Y - this->mousePrePosition.Y));
-		this->isBeingPressed = false;
+		//deal with click on advanced button
+		if (sender == this->shouDongPingChangSwitch1 || sender == this->shouDongPingChangSwitch2) {
+			if (!this->excludeButtonClicked) {
+				if (this->shouDongPingChangSwitch1->Content == "ON") {
+					this->shouDongPingChangSwitch1->Content = "";
+					this->shouDongPingChangSwitch2->Content = "OFF";
+				}
+				else if (this->shouDongPingChangSwitch2->Content == "OFF") {
+					this->shouDongPingChangSwitch1->Content = "ON";
+					this->shouDongPingChangSwitch2->Content = "";
+				}
+			}
+			else
+				this->excludeButtonClicked = false;
+		}
+		else if (sender == this->duoBiPingChangSwitch1 || sender == this->duoBiPingChangSwitch2) {
+			if (!this->excludeButtonClicked) {
+				if (this->duoBiPingChangSwitch1->Content == "ON") {
+					this->duoBiPingChangSwitch1->Content = "";
+					this->duoBiPingChangSwitch2->Content = "OFF";
+				}
+				else if (this->duoBiPingChangSwitch2->Content == "OFF") {
+					this->duoBiPingChangSwitch1->Content = "ON";
+					this->duoBiPingChangSwitch2->Content = "";
+				}
+			}
+		}
 	}
 }
 
@@ -30,16 +60,15 @@ void WPFPage::GridMouseDown(Object ^sender, MouseButtonEventArgs^ args) {
 	}
 }
 
-WPFPage::WPFPage(int allottedWidth, int allotedHeight)
+WPFPage::WPFPage()
 {
-	int rows = 5;
+	int rows = 14;
 	int column = 8;
 	array<ColumnDefinition ^> ^ columnDef = gcnew array<ColumnDefinition ^>(column);
 	array<RowDefinition ^> ^ rowDef = gcnew array<RowDefinition ^>(rows);
 	this->container = gcnew System::Collections::ArrayList();
 	this->excludeButtonClicked = false;
-	this->Height = allotedHeight;
-	this->Width = allottedWidth;
+	this->isAdvanced = false;
 	this->Background = gcnew SolidColorBrush(Colors::Black);
 
 	//Set up the Grid's row and column definitions
@@ -56,11 +85,11 @@ WPFPage::WPFPage(int allottedWidth, int allotedHeight)
 		this->RowDefinitions->Add(rowDef[i]);
 	}
 	//Add the first rowbutton
-	hiddenButton = CreateButton(0, 0, "hid");
+	hiddenButton = CreateButton(0, 0, "收放");
 	hiddenButton->Background = gcnew SolidColorBrush(Colors::Yellow);
-	advanceButton = CreateButton(1, 0, "adv");
+	advanceButton = CreateButton(1, 0, "高级");
 	advanceButton->Background = gcnew SolidColorBrush(Colors::Blue);
-	configureButton = CreateButton(2, 0, "config");
+	configureButton = CreateButton(2, 0, "配置");
 	configureButton->Background = gcnew SolidColorBrush(Colors::Green);
 	pingchangButton = CreateButton(3, 0, "平仓");
 	qingchangButton = CreateButton(4, 0, "清仓");
@@ -135,23 +164,12 @@ WPFPage::WPFPage(int allottedWidth, int allotedHeight)
 	this->container->Add(deleteProfitButton);
 
 
+	
 
 	Grid::SetColumnSpan(stopLevelInput, 2);
 	Grid::SetColumnSpan(profitLevelInput, 2);
 
-	//handle move grid event
-	this->isBeingPressed = false;
-	this->IsHitTestVisible = true;
-	this->MouseDown += gcnew  MouseButtonEventHandler(this, &WPFPage::GridMouseDown);
-	this->MouseUp += gcnew MouseButtonEventHandler(this, &WPFPage::GridMouseUp);
-	this->MouseMove += gcnew MouseEventHandler(this, &WPFPage::GridMouseMove);
-
-	for (int i = 0; i < this->container->Count; i++) {
-		UIElement^ ele = static_cast<UIElement^>(this->container[i]);
-		ele->PreviewMouseDown += gcnew  MouseButtonEventHandler(this, &WPFPage::GridMouseDown);
-		ele->PreviewMouseUp += gcnew MouseButtonEventHandler(this, &WPFPage::GridMouseUp);
-		ele->PreviewMouseMove += gcnew MouseEventHandler(this, &WPFPage::GridMouseMove);
-	}
+	
 
 	//handle button click
 	hiddenButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
@@ -178,15 +196,68 @@ WPFPage::WPFPage(int allottedWidth, int allotedHeight)
 	deleteProfitButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
 	profitButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
 	
-	
 
 
 
+	//add a separation line for the grid
+	this->sepLine1 = CreateBorder(0, 5, Colors::Red, 1);
+	Grid::SetColumnSpan(sepLine1, 8);
+	//add advanced part  which is consist of multiple choices
+	shouDongPingChang = CreateLabel(0, 6, "手动平仓");
+	shouDongPingChangSwitch1 = CreateLabel(2, 6, "");
+	shouDongPingChangSwitch2 = CreateLabel(3, 6, "OFF");
+	shouDongPingChangSwitch1->Foreground = gcnew SolidColorBrush(Colors::Blue);
+	shouDongPingChangSwitch1->Background = gcnew SolidColorBrush(Colors::White);
+	shouDongPingChangSwitch2->Background = gcnew SolidColorBrush(Colors::Red);
+	shouDongPingChangSwitch1->BorderThickness = Thickness(0);
+	shouDongPingChangSwitch2->BorderThickness = Thickness(0);
+	shouDongPingChangSwitch1->BorderBrush = gcnew SolidColorBrush(Colors::Transparent);
+	shouDongPingChangSwitch2->BorderBrush = gcnew SolidColorBrush(Colors::Transparent);
+	shouDongPingChangSwitch1->Margin = Thickness(0);
+	shouDongPingChangSwitch2->Margin = Thickness(0);
+	shouDongPingChangSwitch1->Cursor = System::Windows::Input::Cursors::Arrow;
+	shouDongPingChangSwitch2->Cursor = System::Windows::Input::Cursors::Arrow;
+	//shouDongPingChangSwitch1->Cursor = gcnew System::Windows::Input::Cursor("hand");
+	Grid::SetColumnSpan(shouDongPingChang, 2);
+
+	duoBiPingChang = CreateLabel(4, 6, "多币平仓");
+	duoBiPingChangSwitch1= CreateLabel(6, 6, "");
+	duoBiPingChangSwitch2= CreateLabel(7, 6, "OFF");
+	duoBiPingChangSwitch1->Foreground = gcnew SolidColorBrush(Colors::Blue);
+	duoBiPingChangSwitch1->Background = gcnew SolidColorBrush(Colors::White);
+	duoBiPingChangSwitch2->Background = gcnew SolidColorBrush(Colors::Red);
+	duoBiPingChangSwitch1->BorderThickness = Thickness(0);
+	duoBiPingChangSwitch2->BorderThickness = Thickness(0);
+	duoBiPingChangSwitch1->BorderBrush = gcnew SolidColorBrush(Colors::Transparent);
+	duoBiPingChangSwitch2->BorderBrush = gcnew SolidColorBrush(Colors::Transparent);
+	duoBiPingChangSwitch1->Margin = Thickness(0);
+	duoBiPingChangSwitch2->Margin = Thickness(0);
+	duoBiPingChangSwitch1->Cursor = System::Windows::Input::Cursors::Arrow;
+	duoBiPingChangSwitch2->Cursor = System::Windows::Input::Cursors::Arrow;
+	Grid::SetColumnSpan(duoBiPingChang, 2);
 
 
+	this->container->Add(shouDongPingChangSwitch1);
+	this->container->Add(shouDongPingChangSwitch2);
+
+	this->container->Add(duoBiPingChangSwitch1);
+	this->container->Add(duoBiPingChangSwitch2);
 
 
+	//handle move grid event
+	this->isBeingPressed = false;
+	this->IsHitTestVisible = true;
+	this->MouseDown += gcnew  MouseButtonEventHandler(this, &WPFPage::GridMouseDown);
+	this->MouseUp += gcnew MouseButtonEventHandler(this, &WPFPage::GridMouseUp);
+	this->MouseMove += gcnew MouseEventHandler(this, &WPFPage::GridMouseMove);
 
+
+	for (int i = 0; i < this->container->Count; i++) {
+		UIElement^ ele = static_cast<UIElement^>(this->container[i]);
+		ele->PreviewMouseDown += gcnew  MouseButtonEventHandler(this, &WPFPage::GridMouseDown);
+		ele->PreviewMouseUp += gcnew MouseButtonEventHandler(this, &WPFPage::GridMouseUp);
+		ele->PreviewMouseMove += gcnew MouseEventHandler(this, &WPFPage::GridMouseMove);
+	}
 
 	//cancelButton->Click += gcnew RoutedEventHandler(this, &WPFPage::ButtonClicked);
 }
@@ -195,17 +266,18 @@ Label ^WPFPage::CreateLabel(int column, int row, String ^ text)
 {
 	Label ^ newLabel = gcnew Label();
 	newLabel->Content = text;
-	newLabel->Margin = Thickness(10, 5, 10, 0);
+	newLabel->Foreground = Brushes::White;
 	newLabel->FontWeight = FontWeights::Normal;
 	newLabel->FontSize = 12;
 	Grid::SetColumn(newLabel, column);
 	Grid::SetRow(newLabel, row);
+	this->Children->Add(newLabel);
 	return newLabel;
 }
 TextBox ^WPFPage::CreateTextBox(int column, int row, String^ text)
 {
 	TextBox ^newTextBox = gcnew TextBox();
-	//newTextBox->Margin = Thickness(10, 5, 10, 0);
+	newTextBox->Margin = Thickness(0, 0, 0, 0);
 	newTextBox->Text = text;
 	newTextBox->TextAlignment = TextAlignment::Center;
 	newTextBox->Foreground = Brushes::White;
@@ -215,6 +287,21 @@ TextBox ^WPFPage::CreateTextBox(int column, int row, String^ text)
 	return newTextBox;
 }
 
+Border ^WPFPage::CreateBorder(int column, int row, Color color, int thickness) {
+	Border^ border = gcnew Border();
+	Grid::SetColumn(border, column);
+	Grid::SetRow(border, row);
+
+	border->BorderBrush = gcnew SolidColorBrush(color);
+	border->BorderThickness = Thickness(thickness);
+	border->VerticalAlignment = System::Windows::VerticalAlignment::Bottom;
+	border->Margin = Thickness(0, 10, 0, 5);
+	Grid::SetColumn(border, column);
+	Grid::SetRow(border, row);
+	this->Children->Add(border);
+	return border;
+	
+}
 Button ^WPFPage::CreateButton(int column, int row, String ^ text)
 {
 	Button ^newButton = gcnew Button();
@@ -231,6 +318,7 @@ Button ^WPFPage::CreateButton(int column, int row, String ^ text)
 
 void WPFPage::ButtonClicked(Object ^sender, RoutedEventArgs ^args)
 {
+
 	MyApplicationEventArgs^ myargs = gcnew MyApplicationEventArgs();
 	Boolean send = false;
 	if (sender == this->qingchangButton) {
@@ -275,6 +363,19 @@ void WPFPage::ButtonClicked(Object ^sender, RoutedEventArgs ^args)
 		myargs->Actor = "deleteProfit";
 		send = true;
 	}
+	else if (sender == advanceButton) {
+		myargs->Actor = "advance_panel";
+		myargs->Verb = "show";
+		if (this->isAdvanced) {
+			myargs->Target = "simple";
+			this->isAdvanced = false;
+		}
+		else {
+			myargs->Target = "advance";
+			this->isAdvanced = true;
+		}
+		send = true;
+	}
 
 	//TODO: validate input data
 	//bool okClicked = true;
@@ -312,10 +413,5 @@ void WPFPage::SetFontFamily(FontFamily^ newFontFamily)
 {
 
 	_defaultFontFamily = newFontFamily;
-	titleText->FontFamily = newFontFamily;
-	nameLabel->FontFamily = newFontFamily;
-	addressLabel->FontFamily = newFontFamily;
-	cityLabel->FontFamily = newFontFamily;
-	stateLabel->FontFamily = newFontFamily;
 }
 

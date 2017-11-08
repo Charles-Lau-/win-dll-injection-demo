@@ -23,43 +23,31 @@ HWND parentWindow;
 void WPFButtonClicked(Object ^sender, MyApplicationEventArgs ^args)
 {
 
-	if (args->Actor == "advance_panel") {
-		RECT rect;
-		GetWindowRect(parentWindow, &rect);
-		int width = rect.right - rect.left;
-		int height = 0;
-		if (args->Target == "advance")
-			height = 500;
-		else{
-			height = 120;
-		}
-		MapWindowPoints(HWND_DESKTOP, mqlWindow, (LPPOINT)&rect, 2);
-		MoveWindow(parentWindow, rect.left, rect.top, width, height, true);
-	}
+	System:: Windows::MessageBox::Show(args->Actor);
 }
 
 void GridMoved(Object ^sender, Point ^p) {
 	RECT rect;
 	GetWindowRect(parentWindow, &rect);
-	int width = rect.right - rect.left;
-	int height = rect.bottom - rect.top;
 	MapWindowPoints(HWND_DESKTOP, mqlWindow, (LPPOINT)&rect, 2);
-	MoveWindow(parentWindow, rect.left + p->X, rect.top + p->Y, width , height , true);
+	MoveWindow(parentWindow, rect.left + p->X, rect.top + p->Y, 240, 130, true);
 }
 
 //get hwnd of a WPF
-HWND GetHwnd(HWND pa, int x, int y)
+HWND GetHwnd(HWND pa, int x, int y, int width, int height)
 {
 	System::Windows::Interop::HwndSourceParameters^ sourceParams = gcnew System::Windows::Interop::HwndSourceParameters(
 		"hi" // NAME
 	);
 	sourceParams->PositionX = x;
 	sourceParams->PositionY = y;
+	sourceParams->Height = height;
+	sourceParams->Width = width;
 	sourceParams->ParentWindow = System::IntPtr(pa);
 	sourceParams->WindowStyle =  WS_VISIBLE | WS_CHILD; // style
 	System::Windows::Interop::HwndSource^ source = gcnew System::Windows::Interop::HwndSource(*sourceParams);
 
-	WPFPage ^myPage = gcnew WPFPage();
+	WPFPage ^myPage = gcnew WPFPage(width, height);
 	//Assign a reference to the WPF page and a set of UI properties to a set of static properties in a class
 	//that is designed for that purpose.
 	WPFPageHost::hostedPage = myPage;
@@ -83,7 +71,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_CREATE:
 		//GetClientRect(hWnd, &rect);
-		HWND hwnd = GetHwnd(hWnd, 0, 0);
+		HWND hwnd = GetHwnd(hWnd, 0, 0, 240, 600);
 		//DWORD error = GetLastError();
 		//CreateDataDisplay(hWnd, 275, rect.right - 375, 375);
 		//CreateRadioButtons(hWnd);;
@@ -123,7 +111,7 @@ void Display(HWND hwnd) {
 
 void  createWindow() {
 	HWND window_ = CreateWindow("DllMain", "×Ó´°¿Ú",
-		WS_OVERLAPPEDWINDOW | WS_CHILD | WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, 270, 110,
+		WS_OVERLAPPEDWINDOW | WS_CHILD | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 240, 600,
 		mqlWindow , NULL, NULL, NULL);
 	
 
