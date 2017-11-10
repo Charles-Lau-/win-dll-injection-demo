@@ -14,6 +14,24 @@ using namespace System::Windows::Media;
 using namespace System::Windows::Media::Imaging;
 using namespace System::Windows::Shapes;
 
+
+public ref class PanelMoveEventArgs :EventArgs {
+private:
+	String^ actor;
+	Point^ p; 
+public:
+	PanelMoveEventArgs(String^ actor, Point^ p) { this->actor = actor; this->p = p; };
+
+	property String^ Actor {
+		String^ get() { return this->actor; }
+		void set(String^ value) { this->actor = value; }
+	}
+
+	property Point^ Location {
+		Point^ get() { return this->p;}
+		void set(Point^ value) { this->p = value;}
+	}
+};
 public ref class MyApplicationEventArgs:EventArgs {
 private:
 	String^ actor;
@@ -41,13 +59,11 @@ public:
 	}
 };
 
-
 public ref class WPFPage :Grid {
 public:
 	delegate void ButtonClickHandler(Object ^, MyApplicationEventArgs^);
-	delegate void GridMoveHandler(Object ^, Point ^);
-	WPFPage();
-	WPFPage(int height, int width) {};
+	delegate void GridMoveHandler(Object ^, PanelMoveEventArgs ^);
+	WPFPage() {}
 	event ButtonClickHandler ^OnButtonClicked;
 	event GridMoveHandler ^OnGridMoved;
 	property FontFamily^ DefaultFontFamily
@@ -55,83 +71,28 @@ public:
 		FontFamily^ get() { return _defaultFontFamily; }
 		void set(FontFamily^ value) { SetFontFamily(value); }
 	};
-	Label ^WPFPage::CreateLabel(int column, int row, String ^ text);
-	TextBox ^WPFPage::CreateTextBox(int column, int row, String^ text);
-	Button ^WPFPage::CreateButton(int column, int row, String ^ text);
-
-	
-	void WPFPage::ButtonClicked(Object ^sender, RoutedEventArgs ^args);
-	//for move of the window
-	void WPFPage::GridMouseMove(Object ^sender, MouseEventArgs^ args);
-	void WPFPage::SetFontFamily(FontFamily^ newFontFamily);
-	void WPFPage::GridMouseDown(Object ^sender, MouseButtonEventArgs^ args);
-	void WPFPage::GridMouseUp(Object ^sender, MouseButtonEventArgs^ args);
+	Label ^CreateLabel(int column, int row, String ^ text);
+	TextBox ^CreateTextBox(int column, int row, String^ text);
+	Button ^CreateButton(int column, int row, String ^ text);
 	//draw a line
-	Border ^WPFPage::CreateBorder(int column, int row, Color color, int thickness);
-	//deal with switch button event
+	Border ^CreateBorder(int column, int row, Color color, int thickness);
+
+	CheckBox^ CreateCheckBox(int column, int row);
 
 
 
+	void SetFontFamily(FontFamily^ newFontFamily);
 
+protected:
 
-
-private:
-	
 	System::Collections::ArrayList^  container;
 	//record the position before moving the grid;maintain the status of being pressed; exclude button click event from move event
 	Point mousePrePosition;
 	Boolean isBeingPressed;
 	Boolean excludeButtonClicked;
 
-	Button^ hiddenButton;
-	Button^ advanceButton;
-	Button^ configureButton;
-	Button^ pingchangButton;
-	Button^ qingchangButton;
-	Button^ duisuoButton;
-	Button^ quansuoButton;
-
-	Button^ sellButton;
-	Button^ convenientButton1;
-	Button^ convenientButton2;
-	Button^ convenientButton3;
-	Button^ convenientButton4;
-	TextBox^ lotsButton5;
-	Button^ buyButton;
-
-	Button^ deleteStopButton;
-	Button^ stopButton;
-	TextBox^ stopLevelInput;
-	Button^ pointButton;
-	TextBox^ profitLevelInput;
-	Button^ profitButton;
-	Button^ deleteProfitButton;
-
-
-	Border^ sepLine1;
-	Border^ sepLine2;
-	Border^ sepLine3;
-	Border^ sepLine4;
-
-
-	Label^ shouDongPingChang;
-	Label^ duoBiPingChang;
-
-
-	Button^ shouDongPingChangSwitch1;
-	Button^ shouDongPingChangSwitch2;
-
-	Button^ duoBiPingChangSwitch1;
-	Button^ duoBiPingChangSwitch2;
-
-	Boolean isAdvanced;
-
-
-
-
-
-
 	FontFamily^ _defaultFontFamily;
 
-}; 
+};
+
 

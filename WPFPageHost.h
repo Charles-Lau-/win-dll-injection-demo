@@ -1,13 +1,11 @@
 #pragma once
-#include "WPFPage.h"
+#include "MainPage.h"
+#include "ShouDongPage.h"
 
-public ref class WPFPageHost
-{
-
+public ref class MainPageHost {
 private: 
-
 public:
-	WPFPageHost(){};
+	MainPageHost(){};
 	//initial property settings
 	//initial property settings
 	static System::Windows::Media::Brush^ initBackBrush;
@@ -16,5 +14,22 @@ public:
 	static System::Windows::FontStyle initFontStyle;
 	static System::Windows::FontWeight initFontWeight;
 	static double initFontSize;
-	static WPFPage^ hostedPage;
+	static MainPage^ hostedPage;
 };
+
+
+public ref class ShouDongPageHost {
+private:
+public:
+	ShouDongPageHost(){};
+	//initial property settings
+	//initial property settings
+	static System::Windows::Media::Brush^ initBackBrush;
+	static System::Windows::Media::Brush^ initForeBrush;
+	static System::Windows::Media::FontFamily^ initFontFamily;
+	static System::Windows::FontStyle initFontStyle;
+	static System::Windows::FontWeight initFontWeight;
+	static double initFontSize;
+	static ShouDongPage^ hostedPage;
+};
+
