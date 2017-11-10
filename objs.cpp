@@ -6,6 +6,7 @@
 #include <iostream>
 #include "WPFPageHost.h"
 
+
 using namespace std;
 
 #ifdef _MANAGED
@@ -17,6 +18,8 @@ using namespace std;
 #endif
 
 #define WM_SHOUDONG_SWITCH (WM_USER + 0x0001)
+#define WM_DUOBI_SWITCH (WM_USER + 0x0002)
+
 HWND mqlWindow;
 HWND parentWindow;
 
@@ -100,12 +103,14 @@ HWND createWindow(LPCSTR name, int x, int y, int width, int height) {
 }
 
 //all below functions have something to do with advanced panel
-
 void AdvanceWindowButtonClicked(Object ^sender, MyApplicationEventArgs ^args) {
 	if (args->Actor == "panel") {
 		if (args->Verb == "close") {
 			DestroyWindow(getWindowHWNDFromName(args->Target));
-			PostMessage(parentWindow, WM_SHOUDONG_SWITCH, 0, 0);
+			if (args->Target == "shoudong_panel")
+				PostMessage(parentWindow, WM_SHOUDONG_SWITCH, 0, 0);
+			else if (args->Target == "duobi_panel")
+				PostMessage(parentWindow, WM_DUOBI_SWITCH, 0, 0);
 		}
 	}
 }
@@ -131,6 +136,30 @@ void GridMoved(Object ^sender, PanelMoveEventArgs ^args) {
 	MoveWindow(target, rect.left + p->X, rect.top + p->Y, width , height , true);
 
 }
+
+
+HWND GetDuoBiPingChangHwnd(HWND pa, int x, int y) {
+	System::Windows::Interop::HwndSourceParameters^ sourceParams = gcnew System::Windows::Interop::HwndSourceParameters(
+		"duobi_panel" // NAME
+	);
+	sourceParams->PositionX = x;
+	sourceParams->PositionY = y;
+	sourceParams->ParentWindow = System::IntPtr(pa);
+	sourceParams->WindowStyle = WS_VISIBLE | WS_CHILD; // style
+	System::Windows::Interop::HwndSource^ source = gcnew System::Windows::Interop::HwndSource(*sourceParams);
+
+	DuoBiPage ^myPage = gcnew DuoBiPage();
+	//Assign a reference to the WPF page and a set of UI properties to a set of static properties in a class
+	//that is designed for that purpose.
+	DuoBiPageHost::hostedPage = myPage;
+	DuoBiPageHost::initBackBrush = myPage->Background;
+	DuoBiPageHost::initFontFamily = myPage->DefaultFontFamily;
+	myPage->OnButtonClicked += gcnew DuoBiPage::ButtonClickHandler(AdvanceWindowButtonClicked);
+	myPage->OnGridMoved += gcnew DuoBiPage::GridMoveHandler(GridMoved);
+	source->RootVisual = myPage;
+	return (HWND)source->Handle.ToPointer();
+}
+
 
 
 HWND GetShouDongPingChangHwnd(HWND pa, int x, int y) {
@@ -174,15 +203,43 @@ LRESULT CALLBACK shouDongPingChangWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
+LRESULT CALLBACK duoBiPingChangWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);//可以使GetMessage返回0  
+		break;
+	case WM_CREATE:
+		//GetClientRect(hWnd, &rect);
+		HWND hwnd = GetDuoBiPingChangHwnd(hWnd, 0, 0);
+		resolveOverlapping(hwnd);
+		//DWORD error = GetLastError();
+		//CreateDataDisplay(hWnd, 275, rect.right - 375, 375);
+		//CreateRadioButtons(hWnd);;
+		break;
+	}
+	return DefWindowProc(hWnd, uMsg, wParam, lParam);
+}
+
+
 void createAdvanceWindow(Object^ name) {
 	MSG messages;
 	String^ nameStr = (String^)name;
 	LPCSTR nameLPC = StringToLPCSTR(nameStr);
-	RegisterWindow(nameLPC, shouDongPingChangWndProc);
 	RECT rect;
 	GetWindowRect(parentWindow, &rect);
 	MapWindowPoints(HWND_DESKTOP, mqlWindow, (LPPOINT)&rect, 2);
-	HWND main = createWindow(nameLPC, rect.right, rect.top, 270, 300);
+	HWND main = NULL;
+	if (nameStr == "shoudong_panel") {
+		RegisterWindow(nameLPC, shouDongPingChangWndProc);
+		main = createWindow(nameLPC, rect.right, rect.top, 270, 300);
+	}
+	else if (nameStr == "duobi_panel") {
+		RegisterWindow(nameLPC, duoBiPingChangWndProc);
+		main = createWindow(nameLPC, rect.right, rect.top, 520, 180);
+	}
+	
 	setWindowHWNDFromName(nameStr, main);
 	while (GetMessage(&messages, NULL, 0, 0)) {
 		TranslateMessage(&messages);
@@ -198,15 +255,11 @@ void createAdvanceProcess(String^ name) {
 
 
 void openAdvanceWindow(String^ type) {
-	if (type == "shoudong_panel") {
-		createAdvanceProcess("shoudong_panel");
-	}
+	createAdvanceProcess(type);
 }
 
 void closeAdvanceWindow(String^ type) {
-	if (type == "shoudong_panel") {
-		PostMessage(getWindowHWNDFromName(type), WM_CLOSE, 0, 0);
-	}
+	PostMessage(getWindowHWNDFromName(type), WM_CLOSE, 0, 0);
 }
 
 void MainWindowButtonClicked(Object ^sender, MyApplicationEventArgs ^args)
@@ -272,6 +325,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_SHOUDONG_SWITCH:
 		MainPageHost::hostedPage->switchShouDongOff();
+	case WM_DUOBI_SWITCH:
+		MainPageHost::hostedPage->switchDuoBiOff();
 	case WM_CREATE:
 		//GetClientRect(hWnd, &rect);
 		HWND hwnd = GetMainHwnd(hWnd, 0, 0);

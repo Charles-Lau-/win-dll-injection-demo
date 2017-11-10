@@ -150,6 +150,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DuoBiPage.h" />
     <ClInclude Include="MainPage.h" />
     <ClInclude Include="objs.h" />
     <ClInclude Include="ShouDongPage.h" />
@@ -173,6 +174,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DuoBiPage.cpp" />
     <ClCompile Include="MainPage.cpp" />
     <ClCompile Include="objs.cpp" />
     <ClCompile Include="ShouDongPage.cpp" />

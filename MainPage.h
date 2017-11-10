@@ -16,6 +16,7 @@ public:
 
 
 	void switchShouDongOff();
+	void switchDuoBiOff();
 
 private:
 	

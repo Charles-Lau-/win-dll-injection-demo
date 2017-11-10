@@ -384,3 +384,8 @@ void MainPage::switchShouDongOff() {
 	this->shouDongPingChangSwitch2->Content = "OFF";
 }
 
+void MainPage::switchDuoBiOff() {
+	this->duoBiPingChangSwitch1->Content = "";
+	this->duoBiPingChangSwitch2->Content = "OFF";
+}
+
