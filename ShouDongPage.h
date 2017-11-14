@@ -17,6 +17,9 @@ public:
 	void GridMouseDown(Object ^sender, MouseButtonEventArgs^ args);
 	void GridMouseUp(Object ^sender, MouseButtonEventArgs^ args);
 
+	Boolean isBenbi();
+	Boolean isQuanbi();
+	Boolean isEa();
 
 private:
 
