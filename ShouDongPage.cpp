@@ -158,7 +158,7 @@ ShouDongPage::ShouDongPage() {
 		this->RowDefinitions->Add(rowDef[i]);
 	}
 	//Add the first row title
-	title = CreateLabel(0, 0, "ÊÖ¶¯Æ½²Ö¹ÜÀíÄ£¿é");
+	title = CreateLabel(0, 0, "æ‰‹åŠ¨å¹³ä»“ç®¡ç†æ¨¡å—");
 	Grid::SetColumnSpan(title, 12);
 	title->HorizontalAlignment = System::Windows::HorizontalAlignment::Center;
 	title->Margin = Thickness(0, 0, 0, 10);
@@ -174,11 +174,11 @@ ShouDongPage::ShouDongPage() {
 	Grid::SetColumnSpan(closeButton, 3);
 
 
-	note = CreateLabel(0, 1, "¿Õµ¥·¶Î§£º");
+	note = CreateLabel(0, 1, "ç©ºå•èŒƒå›´ï¼š");
 	Grid::SetColumnSpan(note, 3);
 
 
-	benbiLabel = CreateLabel(3, 1, "±¾±Ò");
+	benbiLabel = CreateLabel(3, 1, "æœ¬å¸");
 	Grid::SetColumnSpan(benbiLabel, 2);
 
 	benbiCheckbox = CreateCheckBox(5, 1);
@@ -186,7 +186,7 @@ ShouDongPage::ShouDongPage() {
 	benbiCheckbox->IsChecked = true;
 	benbiCheckbox->BorderBrush = gcnew SolidColorBrush(Colors::Red);
 
-	quanbiLabel = CreateLabel(7, 1, "È«±Ò");
+	quanbiLabel = CreateLabel(7, 1, "å…¨å¸");
 	Grid::SetColumnSpan(quanbiLabel, 2);
 
 	quanbiCheckbox = CreateCheckBox(9, 1);
@@ -219,22 +219,22 @@ ShouDongPage::ShouDongPage() {
 	eaCheckbox->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
 
 	//create command buttons
-	pingAll = CreateButton(0, 3, "Ò»¼üÆ½²Ö");
-	pingShort = CreateButton(5, 3, "Ò»¼üÆ½¿Õ");
-	pingLong = CreateButton(10, 3, "Ò»¼üÆ½¶à");
+	pingAll = CreateButton(0, 3, "ä¸€é”®å¹³ä»“");
+	pingShort = CreateButton(5, 3, "ä¸€é”®å¹³ç©º");
+	pingLong = CreateButton(10, 3, "ä¸€é”®å¹³å¤š");
 
-	pingProfitable = CreateButton(0, 4, "Æ½Ó¯Àûµ¥");
-	pingSellProfitable = CreateButton(5, 4, "Æ½¿ÕÓ¯µ¥");
-	pingBuyProfitable = CreateButton(10, 4, "Æ½¶àÓ¯µ¥");
+	pingProfitable = CreateButton(0, 4, "å¹³ç›ˆåˆ©å•");
+	pingSellProfitable = CreateButton(5, 4, "å¹³ç©ºç›ˆå•");
+	pingBuyProfitable = CreateButton(10, 4, "å¹³å¤šç›ˆå•");
 
-	pingLoss = CreateButton(0, 5, "Æ½¿÷Ëðµ¥");
-	pingSellLoss = CreateButton(5, 5, "Æ½¿Õ¿÷µ¥");
-	pingBuyLoss = CreateButton(10, 5, "Æ½¿ÕÓ¯µ¥");
+	pingLoss = CreateButton(0, 5, "å¹³äºæŸå•");
+	pingSellLoss = CreateButton(5, 5, "å¹³ç©ºäºå•");
+	pingBuyLoss = CreateButton(10, 5, "å¹³ç©ºç›ˆå•");
 
 
-	deletePending = CreateButton(0, 6, "É¾³ý¹Òµ¥");
-	deleteSellPending = CreateButton(5, 6, "É¾Sell¹Òµ¥");
-	deleteBuyPending = CreateButton(10, 6, "É¾Buy¹Òµ¥");
+	deletePending = CreateButton(0, 6, "åˆ é™¤æŒ‚å•");
+	deleteSellPending = CreateButton(5, 6, "åˆ SellæŒ‚å•");
+	deleteBuyPending = CreateButton(10, 6, "åˆ BuyæŒ‚å•");
 
 
 	this->container->Add(title);
@@ -305,6 +305,17 @@ Button ^ShouDongPage::CreateButton(int column, int row, String ^ text)
 	return newButton;
 }
 
+Boolean ShouDongPage::isBenbi(){
+      return this->benbiCheckbox->IsChecked;
+}
+
+Boolean ShouDongPage::isQuanbi(){
+ 	return this->quanbiCheckbox->IsChecked;
+}
+
+Boolean ShouDongPage::isEa(){
+	return this->eaCheckbox->IsChecked;
+}
 
 void SetFontFamily(FontFamily^ newFontFamily) {}
 
