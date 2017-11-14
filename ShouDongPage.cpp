@@ -10,53 +10,65 @@ void ShouDongPage::ButtonClicked(Object ^sender, RoutedEventArgs ^args) {
 	MyApplicationEventArgs^ myargs = gcnew MyApplicationEventArgs();
 	Boolean send = false;
 	if (sender == this->pingAll) {
-		myargs->Actor = "pingAll";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "pingAll";
 		send = true;
 	}
 	else if (sender == this->pingShort) {
-		myargs->Actor = "pingShort";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "pingShort";
 		send = true;
 
 	}
 	else if (sender == this->pingLong) {
-		myargs->Actor = "pingLong";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "pingLong";
 		send = true;
 
 	}
 	else if (sender == this->pingProfitable) {
-		myargs->Actor = "pingProfitable";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "pingProfitable";
 		send = true;
 	}
 	else if (sender == this->pingSellProfitable) {
-		myargs->Actor = "pingSellProfitable";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "pingSellProfitable";
 		send = true;
 	}
 	else if (sender == this->pingBuyProfitable) {
-		myargs->Actor = "pingBuyProfitable";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "pingBuyProfitable";
 		send = true;
 	}
 	else if (sender == this->pingLoss) {
-		myargs->Actor = "pingLoss";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "pingLoss";
 		send = true;
 	}
 	else if (sender == this->pingSellLoss) {
-		myargs->Actor = "pingSellLoss";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "pingSellLoss";
 		send = true;
 	}
 	else if (sender == this->pingBuyLoss) {
-		myargs->Actor = "pingBuyLoss";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "pingBuyLoss";
 		send = true;
 	}
 	else if (sender == this->deletePending) {
-		myargs->Actor = "deletePending";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "deletePending";
 		send = true;
 	}
 	else if (sender == this->deleteBuyPending) {
-		myargs->Actor = "deleteBuyPending"; 
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "deleteBuyPending"; 
 		send = true;
 	}
 	else if (sender == this->deleteSellPending) {
-		myargs->Actor = "deleteSellPending";
+		myargs->Actor = "shoudong_panel";
+		myargs->Verb = "deleteSellPending";
 		send = true;
 	}
 
