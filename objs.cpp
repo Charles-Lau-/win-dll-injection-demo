@@ -32,7 +32,7 @@ map<string, HWND> nameAndWindows;
 queue<wstring>  messageQueue;
 
 
-//½â¾ö×Ó´°¿ÚÖØµşÎÊÌâ
+//è§£å†³å­çª—å£é‡å é—®é¢˜
 void resolveOverlapping(HWND hwnd) {
 	if (::IsWindow(hwnd)) {
 		DWORD style = GetWindowLong(hwnd, GWL_STYLE);
@@ -55,7 +55,7 @@ void setWindowHWNDFromName(String^ s, HWND hwnd) {
 	nameAndWindows[a] = hwnd;
 }
 
-//Õ¹Ê¾ºÍ¸üĞÂÖ÷´°¿Ú
+//å±•ç¤ºå’Œæ›´æ–°ä¸»çª—å£
 void Display(HWND hwnd) {
 	ShowWindow(hwnd, SW_SHOW);
 	UpdateWindow(hwnd);
@@ -85,7 +85,7 @@ BOOL RegisterWindow(LPCSTR name, WNDPROC messageDealing)
 
 
 HWND createWindow(LPCSTR name, int x, int y, int width, int height) {
-	HWND window_ = CreateWindow(name, "×Ó´°¿Ú",
+	HWND window_ = CreateWindow(name, "å­çª—å£",
 		WS_OVERLAPPEDWINDOW | WS_CHILD | WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU | WS_CLIPSIBLINGS, x, y, width, height,
 		mqlWindow, NULL, NULL, NULL);
 
@@ -105,6 +105,19 @@ void AdvanceWindowButtonClicked(Object ^sender, MyApplicationEventArgs ^args) {
 				PostMessage(parentWindow, WM_SHOUDONG_SWITCH, 0, 0);
 			else if (args->Target == "duobi_panel")
 				PostMessage(parentWindow, WM_DUOBI_SWITCH, 0, 0);
+		}
+	}
+	else if(args->Actor == "shoudong_panel"){
+		String^ verb = args->Verb;
+		String^  quantifier =  nullptr;
+		if(ShouDongPageHost->hostedPage->isBenbi()){
+			quantifier = "benbi";
+		}
+		else if(ShouDongPageHost->hostedPage->isQuanbi()){
+			quantifier = "quanbi";
+		}
+		else if(ShouDongPageHost->hostedPage->isEa()){
+			quantifier = "ea";
 		}
 	}
 }
@@ -183,7 +196,7 @@ LRESULT CALLBACK shouDongPingChangWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	switch (uMsg)
 	{
 	case WM_DESTROY:
-		PostQuitMessage(0);//¿ÉÒÔÊ¹GetMessage·µ»Ø0  
+		PostQuitMessage(0);//å¯ä»¥ä½¿GetMessageè¿”å›0  
 		break;
 	case WM_CREATE:
 		//GetClientRect(hWnd, &rect);
@@ -202,7 +215,7 @@ LRESULT CALLBACK duoBiPingChangWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	switch (uMsg)
 	{
 	case WM_DESTROY:
-		PostQuitMessage(0);//¿ÉÒÔÊ¹GetMessage·µ»Ø0  
+		PostQuitMessage(0);//å¯ä»¥ä½¿GetMessageè¿”å›0  
 		break;
 	case WM_CREATE:
 		//GetClientRect(hWnd, &rect);
@@ -339,7 +352,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_DESTROY:
-		PostQuitMessage(0);//¿ÉÒÔÊ¹GetMessage·µ»Ø0  
+		PostQuitMessage(0);//å¯ä»¥ä½¿GetMessageè¿”å›0  
 		break;
 	case WM_SHOUDONG_SWITCH:
 		MainPageHost::hostedPage->switchShouDongOff();
@@ -363,7 +376,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 
 
-//½â¾öÉÁË¸µÄÎÊÌâ
+//è§£å†³é—ªçƒçš„é—®é¢˜
 void resolveBlink(HWND hwnd) {
 	if (::IsWindow(hwnd)) {
 		DWORD style = GetWindowLong(hwnd, GWL_STYLE);
