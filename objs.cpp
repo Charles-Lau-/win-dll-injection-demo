@@ -29,7 +29,7 @@ HWND parentWindow;
 
 map<string, HWND> nameAndWindows;
 
-queue<const wchar_t*>  messageQueue;
+queue<wstring>  messageQueue;
 
 
 //解决子窗口重叠问题
@@ -287,10 +287,10 @@ void MainWindowButtonClicked(Object ^sender, MyApplicationEventArgs ^args)
 		messageQueue.push(L"pingchang");
 	}
 	else if (args->Actor == "buy") {
-		messageQueue.push(MainPageHost::hostedPage->getBuyCommand().c_str());
+		messageQueue.push(MainPageHost::hostedPage->getBuyCommand());
 	}
 	else if (args->Actor == "sell") {
-		messageQueue.push(MainPageHost::hostedPage->getSellCommand().c_str());
+		messageQueue.push(MainPageHost::hostedPage->getSellCommand());
 	}
 	else if (args->Actor == "duisuo") {
 		messageQueue.push(L"duisuo");
@@ -417,7 +417,7 @@ bool hasMessage() {
 
 
 const wchar_t* getMessage() {
-	return messageQueue.front();
+	return messageQueue.front().c_str();
 	//messageQueue.pop();
 }
 
