@@ -1,11 +1,6 @@
 #include"stdafx.h"
 #include "MainPage.h"
-#include <string> 
-#include <cstdio>
-#include <iostream>
-
-
-
+#include "utils.h"
 
 
 void MainPage::GridMouseMove(Object ^sender, MouseEventArgs^ args) {
@@ -269,10 +264,6 @@ void MainPage::ButtonClicked(Object ^sender, RoutedEventArgs ^args)
 		send = true;
 
 	}
-	else if (sender == this->sellButton) {
-		myargs->Actor = "sell";
-		send = true;
-	}
 	else if (sender == this->duisuoButton) {
 		myargs->Actor = "duisuo";
 		send = true;
@@ -282,11 +273,11 @@ void MainPage::ButtonClicked(Object ^sender, RoutedEventArgs ^args)
 		send = true;
 	}
 	else if (sender == this->sellButton) {
-		myargs->Actor = "buy";
+		myargs->Actor = "sell";
 		send = true;
 	}
 	else if (sender == this->buyButton) {
-		myargs->Actor = "sell";
+		myargs->Actor = "buy";
 		send = true;
 	}
 	else if (sender == this->deleteStopButton) {
@@ -387,5 +378,54 @@ void MainPage::switchShouDongOff() {
 void MainPage::switchDuoBiOff() {
 	this->duoBiPingChangSwitch1->Content = "";
 	this->duoBiPingChangSwitch2->Content = "OFF";
+}
+
+std::wstring MainPage::getBuyCommand() {
+	String^ lots = this->lotsButton5->Text;
+	String^ stop = nullptr;
+	String^ profit = nullptr;
+	if (this->profitButton->Content == "有")
+		profit = this->profitLevelInput->Text;
+	else
+		profit = "none";
+	if (this->stopButton->Content == "有") {
+		stop = this->stopLevelInput->Text;
+	}
+	else
+		stop = "none";
+
+	String^ result = String::Concat("buy|", lots, "|", stop, "|", profit);
+
+
+	std::string s = "";
+	MarshalString(result, s);
+	std::wstring w;
+	w.assign(s.begin(), s.end());
+	return w;
+}
+
+std::wstring MainPage::getSellCommand() {
+	String^ lots = this->lotsButton5->Text;
+	String^ stop = nullptr;
+	String^ profit = nullptr;
+	if (this->profitButton->Content == "有")
+		profit = this->profitLevelInput->Text;
+	else
+		profit = "none";
+	if (this->stopButton->Content == "有") {
+		stop = this->stopLevelInput->Text;
+	}
+	else
+		stop = "none";
+
+	String^ result = String::Concat("sell|", lots, "|", stop, "|", profit);
+
+
+	std::string s = "";
+	MarshalString(result, s);
+	std::wstring w;
+	w.assign(s.begin(), s.end());
+	return w;
+
 }
 

@@ -1,5 +1,7 @@
 #pragma once
 #include "WPFPage.h"
+#include <string>
+#include <iostream>
 
 public ref class MainPage :WPFPage {
 public:
@@ -17,6 +19,11 @@ public:
 
 	void switchShouDongOff();
 	void switchDuoBiOff();
+
+
+	//orders
+	std::wstring getBuyCommand();
+	std::wstring getSellCommand();
 
 private:
 	

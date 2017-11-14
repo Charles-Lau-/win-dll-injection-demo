@@ -3,8 +3,10 @@
 #include "stdafx.h"
 #include <stdio.h>
 #include <map>
+#include <queue>
 #include <iostream>
 #include "WPFPageHost.h"
+#include "utils.h"
 
 
 using namespace std;
@@ -27,6 +29,7 @@ HWND parentWindow;
 
 map<string, HWND> nameAndWindows;
 
+queue<const wchar_t*>  messageQueue;
 
 
 //解决子窗口重叠问题
@@ -38,15 +41,6 @@ void resolveOverlapping(HWND hwnd) {
 	}
 }
 
-LPCSTR StringToLPCSTR(String^ s) {
-	return (const char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(s)).ToPointer();
-}
-
-void MarshalString(String^ s, string& os) {
-	const char* chars = (const char*)(System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(s)).ToPointer();
-	os = chars;
-	System::Runtime::InteropServices::Marshal::FreeHGlobal(IntPtr((void*)chars));
-}
 
 
 HWND getWindowHWNDFromName(String^ s) {
@@ -286,6 +280,30 @@ void MainWindowButtonClicked(Object ^sender, MyApplicationEventArgs ^args)
 			closeAdvanceWindow(args->Target);
 		}
 	}
+	else if (args->Actor == "qingchang") {
+		messageQueue.push(L"qingchang");
+	}
+	else if (args->Actor == "pingchang") {
+		messageQueue.push(L"pingchang");
+	}
+	else if (args->Actor == "buy") {
+		messageQueue.push(MainPageHost::hostedPage->getBuyCommand().c_str());
+	}
+	else if (args->Actor == "sell") {
+		messageQueue.push(MainPageHost::hostedPage->getSellCommand().c_str());
+	}
+	else if (args->Actor == "duisuo") {
+		messageQueue.push(L"duisuo");
+	}
+	else if (args->Actor == "quansuo") {
+		messageQueue.push(L"quansuo");
+	}
+	else if (args->Actor == "deleteStop") {
+		messageQueue.push(L"deleteStop");
+	}
+	else if (args->Actor == "deleteProfit") {
+		messageQueue.push(L"deleteProfit");
+	}
 }
 
 //get hwnd of a WPF
@@ -384,4 +402,25 @@ void createProcess(HWND hwnd) {
 	System::Threading::Thread^  t = gcnew System::Threading::Thread(gcnew System::Threading::ThreadStart(ThreadProc));
 	t->ApartmentState = System::Threading::ApartmentState::STA;
 	t->Start();
+}
+
+
+
+
+bool hasMessage() {
+	if (messageQueue.empty())
+		return false;
+	else
+		return true;
+}
+
+
+
+const wchar_t* getMessage() {
+	return messageQueue.front();
+	//messageQueue.pop();
+}
+
+void removeMessage() {
+	messageQueue.pop();
 }

@@ -1,3 +1,6 @@
 LIBRARY
 EXPORTS
 	createProcess;
+	hasMessage;
+	getMessage; 
+	removeMessage;
