@@ -63,7 +63,7 @@ void ShouDongPage::ButtonClicked(Object ^sender, RoutedEventArgs ^args) {
 	}
 	else if (sender == this->deleteBuyPending) {
 		myargs->Actor = "shoudong_panel";
-		myargs->Verb = "deleteBuyPending"; 
+		myargs->Verb = "deleteBuyPending";
 		send = true;
 	}
 	else if (sender == this->deleteSellPending) {
@@ -170,7 +170,7 @@ ShouDongPage::ShouDongPage() {
 		this->RowDefinitions->Add(rowDef[i]);
 	}
 	//Add the first row title
-	title = CreateLabel(0, 0, "æ‰‹åŠ¨å¹³ä»“ç®¡ç†æ¨¡å—");
+	title = CreateLabel(0, 0, "ÊÖ¶¯Æ½²Ö¹ÜÀíÄ£¿é");
 	Grid::SetColumnSpan(title, 12);
 	title->HorizontalAlignment = System::Windows::HorizontalAlignment::Center;
 	title->Margin = Thickness(0, 0, 0, 10);
@@ -186,11 +186,11 @@ ShouDongPage::ShouDongPage() {
 	Grid::SetColumnSpan(closeButton, 3);
 
 
-	note = CreateLabel(0, 1, "ç©ºå•èŒƒå›´ï¼š");
+	note = CreateLabel(0, 1, "¿Õµ¥·¶Î§£º");
 	Grid::SetColumnSpan(note, 3);
 
 
-	benbiLabel = CreateLabel(3, 1, "æœ¬å¸");
+	benbiLabel = CreateLabel(3, 1, "±¾±Ò");
 	Grid::SetColumnSpan(benbiLabel, 2);
 
 	benbiCheckbox = CreateCheckBox(5, 1);
@@ -198,7 +198,7 @@ ShouDongPage::ShouDongPage() {
 	benbiCheckbox->IsChecked = true;
 	benbiCheckbox->BorderBrush = gcnew SolidColorBrush(Colors::Red);
 
-	quanbiLabel = CreateLabel(7, 1, "å…¨å¸");
+	quanbiLabel = CreateLabel(7, 1, "È«±Ò");
 	Grid::SetColumnSpan(quanbiLabel, 2);
 
 	quanbiCheckbox = CreateCheckBox(9, 1);
@@ -220,33 +220,33 @@ ShouDongPage::ShouDongPage() {
 	//benbiCheckbox->Background = gcnew SolidColorBrush(Colors::Green);
 	//quanbiCheckbox->Background = gcnew SolidColorBrush(Colors::Red);
 	//eaCheckbox->Background = gcnew SolidColorBrush(Colors::Red);
-	
+
 	this->sep = CreateBorder(0, 2, Colors::Red, 1);
 	this->sep->Margin = Thickness(0, 5, 0, 10);
 	Grid::SetColumnSpan(this->sep, 15);
 
-	
-	benbiCheckbox->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked); 
+
+	benbiCheckbox->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
 	quanbiCheckbox->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
 	eaCheckbox->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
 
 	//create command buttons
-	pingAll = CreateButton(0, 3, "ä¸€é”®å¹³ä»“");
-	pingShort = CreateButton(5, 3, "ä¸€é”®å¹³ç©º");
-	pingLong = CreateButton(10, 3, "ä¸€é”®å¹³å¤š");
+	pingAll = CreateButton(0, 3, "Ò»¼üÆ½²Ö");
+	pingShort = CreateButton(5, 3, "Ò»¼üÆ½¿Õ");
+	pingLong = CreateButton(10, 3, "Ò»¼üÆ½¶à");
 
-	pingProfitable = CreateButton(0, 4, "å¹³ç›ˆåˆ©å•");
-	pingSellProfitable = CreateButton(5, 4, "å¹³ç©ºç›ˆå•");
-	pingBuyProfitable = CreateButton(10, 4, "å¹³å¤šç›ˆå•");
+	pingProfitable = CreateButton(0, 4, "Æ½Ó¯Àûµ¥");
+	pingSellProfitable = CreateButton(5, 4, "Æ½¿ÕÓ¯µ¥");
+	pingBuyProfitable = CreateButton(10, 4, "Æ½¶àÓ¯µ¥");
 
-	pingLoss = CreateButton(0, 5, "å¹³äºæŸå•");
-	pingSellLoss = CreateButton(5, 5, "å¹³ç©ºäºå•");
-	pingBuyLoss = CreateButton(10, 5, "å¹³ç©ºç›ˆå•");
+	pingLoss = CreateButton(0, 5, "Æ½¿÷Ëðµ¥");
+	pingSellLoss = CreateButton(5, 5, "Æ½¿Õ¿÷µ¥");
+	pingBuyLoss = CreateButton(10, 5, "Æ½¶à¿÷µ¥");
 
 
-	deletePending = CreateButton(0, 6, "åˆ é™¤æŒ‚å•");
-	deleteSellPending = CreateButton(5, 6, "åˆ SellæŒ‚å•");
-	deleteBuyPending = CreateButton(10, 6, "åˆ BuyæŒ‚å•");
+	deletePending = CreateButton(0, 6, "É¾³ý¹Òµ¥");
+	deleteSellPending = CreateButton(5, 6, "É¾Sell¹Òµ¥");
+	deleteBuyPending = CreateButton(10, 6, "É¾Buy¹Òµ¥");
 
 
 	this->container->Add(title);
@@ -265,7 +265,7 @@ ShouDongPage::ShouDongPage() {
 	this->container->Add(pingShort);
 	this->container->Add(pingLong);
 	this->container->Add(pingProfitable);
-	
+
 	this->container->Add(pingBuyProfitable);
 	this->container->Add(pingSellProfitable);
 	this->container->Add(pingLoss);
@@ -275,6 +275,20 @@ ShouDongPage::ShouDongPage() {
 	this->container->Add(deletePending);
 	this->container->Add(deleteBuyPending);
 	this->container->Add(deleteSellPending);
+
+	pingAll->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+	pingShort->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+	pingLong->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+	pingProfitable->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+	pingBuyProfitable->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+	pingSellProfitable->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+	pingLoss->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+	pingBuyLoss->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+	pingSellLoss->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+
+	deletePending->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+	deleteBuyPending->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
+	deleteSellPending->Click += gcnew RoutedEventHandler(this, &ShouDongPage::ButtonClicked);
 
 
 
@@ -297,9 +311,6 @@ ShouDongPage::ShouDongPage() {
 
 
 
-
-
-
 Button ^ShouDongPage::CreateButton(int column, int row, String ^ text)
 {
 	Button ^newButton = gcnew Button();
@@ -317,16 +328,25 @@ Button ^ShouDongPage::CreateButton(int column, int row, String ^ text)
 	return newButton;
 }
 
-Boolean ShouDongPage::isBenbi(){
-      return this->benbiCheckbox->IsChecked;
+Boolean ShouDongPage::isBenbi() {
+	if (this->benbiCheckbox->IsChecked)
+		return true;
+	else
+		return false;
 }
 
-Boolean ShouDongPage::isQuanbi(){
- 	return this->quanbiCheckbox->IsChecked;
+Boolean ShouDongPage::isQuanbi() {
+	if (this->quanbiCheckbox->IsChecked)
+		return true;
+	else
+		return false;
 }
 
-Boolean ShouDongPage::isEa(){
-	return this->eaCheckbox->IsChecked;
+Boolean ShouDongPage::isEa() {
+	if (this->eaCheckbox->IsChecked)
+		return true;
+	else
+		return false;
 }
 
 void SetFontFamily(FontFamily^ newFontFamily) {}

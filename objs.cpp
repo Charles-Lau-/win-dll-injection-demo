@@ -32,7 +32,7 @@ map<string, HWND> nameAndWindows;
 queue<wstring>  messageQueue;
 
 
-//è§£å†³å­çª—å£é‡å é—®é¢˜
+//½â¾ö×Ó´°¿ÚÖØµşÎÊÌâ
 void resolveOverlapping(HWND hwnd) {
 	if (::IsWindow(hwnd)) {
 		DWORD style = GetWindowLong(hwnd, GWL_STYLE);
@@ -55,7 +55,7 @@ void setWindowHWNDFromName(String^ s, HWND hwnd) {
 	nameAndWindows[a] = hwnd;
 }
 
-//å±•ç¤ºå’Œæ›´æ–°ä¸»çª—å£
+//Õ¹Ê¾ºÍ¸üĞÂÖ÷´°¿Ú
 void Display(HWND hwnd) {
 	ShowWindow(hwnd, SW_SHOW);
 	UpdateWindow(hwnd);
@@ -85,7 +85,7 @@ BOOL RegisterWindow(LPCSTR name, WNDPROC messageDealing)
 
 
 HWND createWindow(LPCSTR name, int x, int y, int width, int height) {
-	HWND window_ = CreateWindow(name, "å­çª—å£",
+	HWND window_ = CreateWindow(name, "×Ó´°¿Ú",
 		WS_OVERLAPPEDWINDOW | WS_CHILD | WS_VISIBLE | WS_OVERLAPPED | WS_SYSMENU | WS_CLIPSIBLINGS, x, y, width, height,
 		mqlWindow, NULL, NULL, NULL);
 
@@ -107,18 +107,24 @@ void AdvanceWindowButtonClicked(Object ^sender, MyApplicationEventArgs ^args) {
 				PostMessage(parentWindow, WM_DUOBI_SWITCH, 0, 0);
 		}
 	}
-	else if(args->Actor == "shoudong_panel"){
+	else if (args->Actor == "shoudong_panel") {
 		String^ verb = args->Verb;
-		String^  quantifier =  nullptr;
-		if(ShouDongPageHost->hostedPage->isBenbi()){
+		String^  quantifier = nullptr;
+		if (ShouDongPageHost::hostedPage->isBenbi()) {
 			quantifier = "benbi";
 		}
-		else if(ShouDongPageHost->hostedPage->isQuanbi()){
+		else if (ShouDongPageHost::hostedPage->isQuanbi()) {
 			quantifier = "quanbi";
 		}
-		else if(ShouDongPageHost->hostedPage->isEa()){
+		else if (ShouDongPageHost::hostedPage->isEa()) {
 			quantifier = "ea";
 		}
+		String^ com = String::Concat(verb, "|", quantifier);
+		std::string s = "";
+		MarshalString(com, s);
+		std::wstring w;
+		w.assign(s.begin(), s.end());
+		messageQueue.push(w);
 	}
 }
 
@@ -140,7 +146,7 @@ void GridMoved(Object ^sender, PanelMoveEventArgs ^args) {
 	MapWindowPoints(HWND_DESKTOP, mqlWindow, (LPPOINT)&rect, 2);
 
 
-	MoveWindow(target, rect.left + p->X, rect.top + p->Y, width , height , true);
+	MoveWindow(target, rect.left + p->X, rect.top + p->Y, width, height, true);
 
 }
 
@@ -196,7 +202,7 @@ LRESULT CALLBACK shouDongPingChangWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	switch (uMsg)
 	{
 	case WM_DESTROY:
-		PostQuitMessage(0);//å¯ä»¥ä½¿GetMessageè¿”å›0  
+		PostQuitMessage(0);//¿ÉÒÔÊ¹GetMessage·µ»Ø0  
 		break;
 	case WM_CREATE:
 		//GetClientRect(hWnd, &rect);
@@ -215,7 +221,7 @@ LRESULT CALLBACK duoBiPingChangWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	switch (uMsg)
 	{
 	case WM_DESTROY:
-		PostQuitMessage(0);//å¯ä»¥ä½¿GetMessageè¿”å›0  
+		PostQuitMessage(0);//¿ÉÒÔÊ¹GetMessage·µ»Ø0  
 		break;
 	case WM_CREATE:
 		//GetClientRect(hWnd, &rect);
@@ -246,7 +252,7 @@ void createAdvanceWindow(Object^ name) {
 		RegisterWindow(nameLPC, duoBiPingChangWndProc);
 		main = createWindow(nameLPC, rect.right, rect.top, 520, 180);
 	}
-	
+
 	setWindowHWNDFromName(nameStr, main);
 	while (GetMessage(&messages, NULL, 0, 0)) {
 		TranslateMessage(&messages);
@@ -279,7 +285,7 @@ void MainWindowButtonClicked(Object ^sender, MyApplicationEventArgs ^args)
 		int height = 0;
 		if (args->Target == "advance")
 			height = 600;
-		else{
+		else {
 			height = 120;
 		}
 		MapWindowPoints(HWND_DESKTOP, mqlWindow, (LPPOINT)&rect, 2);
@@ -328,7 +334,7 @@ HWND GetMainHwnd(HWND pa, int x, int y)
 	sourceParams->PositionX = x;
 	sourceParams->PositionY = y;
 	sourceParams->ParentWindow = System::IntPtr(pa);
-	sourceParams->WindowStyle =  WS_VISIBLE | WS_CHILD; // style
+	sourceParams->WindowStyle = WS_VISIBLE | WS_CHILD; // style
 	System::Windows::Interop::HwndSource^ source = gcnew System::Windows::Interop::HwndSource(*sourceParams);
 
 	MainPage^myPage = gcnew MainPage();
@@ -352,7 +358,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	switch (uMsg)
 	{
 	case WM_DESTROY:
-		PostQuitMessage(0);//å¯ä»¥ä½¿GetMessageè¿”å›0  
+		PostQuitMessage(0);//¿ÉÒÔÊ¹GetMessage·µ»Ø0  
 		break;
 	case WM_SHOUDONG_SWITCH:
 		MainPageHost::hostedPage->switchShouDongOff();
@@ -376,7 +382,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 
 
-//è§£å†³é—ªçƒçš„é—®é¢˜
+//½â¾öÉÁË¸µÄÎÊÌâ
 void resolveBlink(HWND hwnd) {
 	if (::IsWindow(hwnd)) {
 		DWORD style = GetWindowLong(hwnd, GWL_STYLE);
@@ -391,7 +397,7 @@ void entrance()
 {
 	MSG messages;
 	RegisterWindow("DllMain", WndProc);
-	HWND main = createWindow("DllMain", 0, 0,270, 120);
+	HWND main = createWindow("DllMain", 0, 0, 270, 120);
 	parentWindow = main;
 	while (GetMessage(&messages, NULL, 0, 0))
 	{
